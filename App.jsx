@@ -1,70 +1,76 @@
-import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
 
 function App() {
-  
-  const [showButton,setShowButton]=useState(true);
-  const [timerMessage,setTimerMessage]=useState('');
-  const [otp, setOtp] = useState("");
+  const [query, setQuery] = useState("");
+  const items = [
+    "Apples",
+    "Bananas",
+    "Strawberries",
+    "Blueberries",
+    "Mangoes",
+    "Pineapple",
+    "Lettuce",
+    "Broccoli",
+    "Paper Towels",
+    "Dish Soap",
+  ];
+  const [selectedItems, setSelectedItems] = useState([]);
+  const toggleItem = (item) => {
+    setSelectedItems((prev) =>
+      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
+    );
+  };
 
-  const generatePassword=()=>{
-    return Math.floor(100000+Math.random()*900000);
-  }
-  const handleclick=()=>{
-    setOtp(generatePassword());
-    setShowButton(false);
-    
-  }
-  useEffect(()=>{
-    if(!showButton){
-      let i=5;
-      const intervalId=setInterval(()=>{
-        
-        
-        setTimerMessage(`Expires in ${i} seconds`)
-        if(i==0){
-        setOtp('');
-        setTimerMessage("OTP expired. Click the button to generate a new OTP.")
-        clearInterval(intervalId);
-        setShowButton(true);
-      }
-        i--;
-        
-      
-      },1000)
-      
-      
-        
-        
-      
-    }
-      
-
-
-
-    
-  },[showButton])
-
-
+  const filteredItems = items.filter((item) => {
+    return item.toLowerCase().includes(query.toLowerCase());
+  });
   return (
-    <div className="container" >
-      <h1 id="otp-title">OTP Generator</h1>
-      <h2 id="otp-display">Click 'Generate OTP' to get a code</h2>
-      <p>{otp}</p>
-      <p id="otp-timer">{timerMessage}</p> {/*future Expires in: X seconds and shows OTP expired. Click the button to generate a new OTP*/}
-      {
-        showButton && (
-        <button id="generate-otp-button" onClick={handleclick}>Generate OTP</button>
-        )}
-        {/* when button clicked generate a new otp and start a 5 second countdown and disable the button while counting*/}
-      
-    
-    
-    </div>
+    <>
+      <div className="container">
+        <h1>Shopping List</h1>
+        <form>
+          <label htmlFor="search">Search for an item:</label>
+          <input
+            type="search"
+            id="search"
+            placeholder="Search..."
+            aria-describedby="search-description"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+
+          <p id="search-description">Type to filter the list below:</p>
+
+          <ul>
+            {filteredItems.map((item) => {
+              const isChecked = selectedItems.includes(item);
+              return (
+                <li
+                  key={item}
+                  style={{
+                    textDecoration: isChecked ? "line-through" : "none",
+                  }}
+                >
+                  <label>
+                    {
+                      <input
+                        type="checkbox"
+                        onChange={() => toggleItem(item)}
+                      />
+                    }
+                    {item}
+                  </label>
+                </li>
+              );
+            })}
+          </ul>
+        </form>
+      </div>
+    </>
   );
 }
 
-
-export default App
+export default App;
